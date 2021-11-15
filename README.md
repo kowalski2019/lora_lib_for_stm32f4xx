@@ -1,2 +1,6 @@
-# lora_lib_for_stm32f4xx
-Lib for using Lora modules sx1276/rfm95/rfm96
+# LoRa lib for stm32f429xxx
+
+This library is compatible with the LoRa modules sx1276/rfm95/rfm96
+
+# How to use the lib ?
+The example.c file shows you how to use this library.
