@@ -1,80 +1,10 @@
 #include "lora.h"
 
-void example_RCC_config(void)
-{
-	__HAL_RCC_SPI4_CLK_ENABLE();
-	__HAL_RCC_GPIOE_CLK_ENABLE();
-	__HAL_RCC_GPIOF_CLK_ENABLE();
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-}
-
-void example_GPIO_Init(void)
-{
-	 GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-
-	  /*Configure GPIO pin Output Level */
-	  HAL_GPIO_WritePin(RFM95_NSS_GPIO_Port, RFM95_NSS_Pin, GPIO_PIN_SET);
-
-	  /*Configure GPIO pin : PF10 */
-	  GPIO_InitStruct.Pin = RFM95_DIO0_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	  HAL_GPIO_Init(RFM95_DIO0_GPIO_Port, &GPIO_InitStruct);
-
-	  /*SPI_PINS*/
-	  /*Configure GPIO pin : PE11 */
-	  GPIO_InitStruct.Pin = RFM95_NSS_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	  HAL_GPIO_Init(RFM95_NSS_GPIO_Port, &GPIO_InitStruct);
-
-	  GPIO_InitStruct.Pin = (RFM95_SPI_SCK_Pin | RFM95_SPI_MISO_Pin | RFM95_SPI_MOSI_Pin);
-	  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-	  GPIO_InitStruct.Alternate = GPIO_AF5_SPI4;
-	  HAL_GPIO_Init(RFM95_SPI_Port, &GPIO_InitStruct);
-
-	  /*Configure GPIO pin : PB10 for reset , it will be not use*/
-	  GPIO_InitStruct.Pin = RFM95_NRST_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	  GPIO_InitStruct.Pull = GPIO_NOPULL;
-	  HAL_GPIO_Init(RFM95_NRST_GPIO_Port, &GPIO_InitStruct);
-
-	  /* EXTI interrupt init*/
-	  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
-	  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
-
-}
-
-void example_SPI_Init(void)
-{
-
-	hspi4.Instance = SPI4;
-	hspi4.Init.Mode = SPI_MODE_MASTER;
-	hspi4.Init.Direction = SPI_DIRECTION_2LINES;
-	hspi4.Init.DataSize = SPI_DATASIZE_8BIT;
-	hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
-	hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
-	hspi4.Init.NSS = SPI_NSS_SOFT;
-	hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
-	hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
-	hspi4.Init.TIMode = SPI_TIMODE_DISABLE;
-	hspi4.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-	hspi4.Init.CRCPolynomial = 10;
-	HAL_SPI_Init(&hspi4);
-}
-
 void example_init(void)
 {
-	example_RCC_config();
-	example_GPIO_Init();
-	example_SPI_Init();
 
 	lora_handle_t lora;
-	lora.spi_handle = &hspi4;
+	lora.spi_handle = &hspi_handle_struct;
 	lora.nss_port = RFM95_NSS_GPIO_Port;
 	lora.nss_pin = RFM95_NSS_Pin;
 	lora.nrst_port = RFM95_NRST_GPIO_Port;
